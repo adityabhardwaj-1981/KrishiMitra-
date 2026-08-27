@@ -24,7 +24,11 @@
     },
     {
       "src": "/landing",
-      "dest": "/index.html"
+      "dest": "/landing.html"
+    },
+    {
+      "src": "/",
+      "dest": "/landing.html"
     },
     {
       "src": "/assets/(.*)",

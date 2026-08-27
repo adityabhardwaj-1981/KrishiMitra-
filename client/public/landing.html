@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>कृषिमित्र · KrishiMitra</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F2EDDD;
+    --panel:#FBF8EF;
+    --ink:#20261B;
+    --ink-soft:#4B4E3F;
+    --green-deep:#2F4A2E;
+    --green-bright:#5C8A4A;
+    --gold:#D98C15;
+    --brick:#7A3B2E;
+    --sky:#3E6B7D;
+    --line: rgba(32,38,27,0.16);
+    --line-strong: rgba(32,38,27,0.32);
+    --radius: 4px;
+  }
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior:auto; }
+    *{ animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; }
+  }
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Work Sans', sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3, .display{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    letter-spacing:-0.01em;
+    color:var(--ink);
+    margin:0;
+  }
+  .hi{ font-family:'Noto Sans Devanagari', 'Fraunces', serif; }
+  .mono{ font-family:'IBM Plex Mono', monospace; }
+  a{ color:inherit; }
+  button{ font-family:inherit; }
+  :focus-visible{ outline:3px solid var(--gold); outline-offset:2px; }
+
+  /* texture: faint furrow lines across the whole page */
+  body{
+    background-image: repeating-linear-gradient(180deg, rgba(47,74,46,0.035) 0px, rgba(47,74,46,0.035) 1px, transparent 1px, transparent 34px);
+  }
+
+  .wrap{ max-width:1080px; margin:0 auto; padding:0 28px; }
+
+  /* ---------- Growth rail nav ---------- */
+  .rail{
+    position:sticky; top:0; z-index:50;
+    background:rgba(242,237,221,0.92);
+    backdrop-filter: blur(6px);
+    border-bottom:1px solid var(--line);
+  }
+  .rail-inner{
+    max-width:1080px; margin:0 auto; padding:14px 28px;
+    display:flex; align-items:center; gap:22px; overflow-x:auto;
+  }
+  .rail-mark{ font-family:'Fraunces',serif; font-weight:700; font-size:19px; white-space:nowrap; flex-shrink:0; }
+  .rail-mark .dot{ color:var(--gold); }
+  .rail-stages{ display:flex; gap:4px; flex:1; list-style:none; margin:0; padding:0; }
+  .rail-stages li{ flex-shrink:0; }
+  .rail-stages a{
+    display:flex; align-items:center; gap:7px;
+    text-decoration:none; font-size:13px; font-weight:600;
+    color:var(--ink-soft); padding:8px 12px; border-radius:999px;
+    white-space:nowrap; transition:background .18s ease, color .18s ease;
+  }
+  .rail-stages a .num{ font-family:'IBM Plex Mono',monospace; font-size:11px; opacity:.55; }
+  .rail-stages a:hover{ background:rgba(92,138,74,0.14); color:var(--green-deep); }
+  .rail-stages a.active{ background:var(--green-deep); color:var(--paper); }
+  .rail-stages a.active .num{ opacity:.75; color:var(--paper); }
+
+  /* ---------- Hero ---------- */
+  .hero{ padding:76px 0 56px; position:relative; }
+  .hero-eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.06em;
+    text-transform:uppercase; color:var(--green-deep);
+    background:rgba(92,138,74,0.15); padding:6px 12px; border-radius:999px;
+    margin-bottom:22px;
+  }
+  .hero-eyebrow::before{ content:"●"; color:var(--gold); font-size:8px; }
+  .hero h1{ font-size:clamp(38px, 6vw, 64px); line-height:1.04; max-width:15ch; }
+  .hero h1 .hi{ display:block; font-size:.6em; color:var(--green-deep); font-weight:500; margin-bottom:6px; }
+  .hero p{ font-size:18px; color:var(--ink-soft); max-width:46ch; margin-top:20px; }
+  .hero-cta{ display:flex; gap:14px; margin-top:32px; flex-wrap:wrap; }
+  .btn{
+    font-weight:600; font-size:14px; padding:13px 22px; border-radius:var(--radius);
+    border:1.5px solid var(--ink); cursor:pointer; text-decoration:none;
+    display:inline-flex; align-items:center; gap:8px; transition:transform .15s ease, box-shadow .15s ease;
+    background:transparent; color:var(--ink);
+  }
+  .btn:hover{ transform:translateY(-2px); }
+  .btn-solid{ background:var(--green-deep); color:var(--paper); border-color:var(--green-deep); }
+  .btn-solid:hover{ box-shadow:4px 4px 0 var(--gold); }
+  .btn-ghost:hover{ box-shadow:4px 4px 0 var(--line-strong); }
+
+  /* growth timeline visual under hero */
+  .timeline{ margin-top:56px; }
+  .timeline svg{ width:100%; height:auto; display:block; }
+
+  /* ---------- Stage sections (field rows) ---------- */
+  .stage{ padding:70px 0; border-top:1px solid var(--line); position:relative; }
+  .stage-head{ display:flex; align-items:baseline; gap:16px; margin-bottom:8px; }
+  .stage-num{ font-family:'IBM Plex Mono',monospace; color:var(--gold); font-size:14px; font-weight:600; }
+  .stage-head h2{ font-size:clamp(26px,3.4vw,36px); }
+  .stage-sub{ color:var(--ink-soft); max-width:60ch; margin:10px 0 34px; font-size:15.5px; }
+  .stage-sub .hi{ color:var(--ink); }
+
+  .panel{
+    background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+    padding:26px; box-shadow: 3px 3px 0 rgba(32,38,27,0.05);
+  }
+  .grid2{ display:grid; grid-template-columns: 1.1fr 1fr; gap:26px; align-items:start; }
+  @media (max-width:760px){ .grid2{ grid-template-columns:1fr; } }
+
+  .field{ margin-bottom:16px; }
+  .field label{ display:block; font-size:12.5px; font-weight:600; color:var(--ink-soft); margin-bottom:6px; text-transform:uppercase; letter-spacing:.03em; }
+  .field select, .field input[type=text]{
+    width:100%; padding:11px 12px; border:1.5px solid var(--line-strong); border-radius:var(--radius);
+    background:var(--paper); font-family:'Work Sans',sans-serif; font-size:14.5px; color:var(--ink);
+  }
+  .field select:focus, .field input:focus{ border-color:var(--green-deep); }
+
+  .result-box{
+    border:1.5px dashed var(--line-strong); border-radius:var(--radius); padding:20px;
+    min-height:110px; display:flex; flex-direction:column; justify-content:center; gap:8px;
+    font-size:14.5px; color:var(--ink-soft); background:rgba(255,255,255,0.35);
+  }
+  .result-box.filled{ border-style:solid; border-color:var(--green-bright); background:rgba(92,138,74,0.08); color:var(--ink); }
+  .result-title{ font-weight:700; color:var(--green-deep); font-family:'Fraunces',serif; font-size:17px; }
+  .badge{
+    display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:11.5px; font-weight:600;
+    padding:3px 9px; border-radius:999px; background:var(--gold); color:var(--ink); margin-top:4px; width:fit-content;
+  }
+
+  /* Protect: upload */
+  .upload-zone{
+    border:1.5px dashed var(--line-strong); border-radius:var(--radius); padding:26px;
+    text-align:center; cursor:pointer; transition:border-color .15s ease, background .15s ease;
+    background:rgba(255,255,255,0.35);
+  }
+  .upload-zone:hover, .upload-zone.drag{ border-color:var(--green-bright); background:rgba(92,138,74,0.08); }
+  .upload-zone input{ display:none; }
+  .upload-preview{ max-width:100%; max-height:180px; border-radius:var(--radius); margin-top:14px; display:none; }
+  .upload-hint{ font-size:13px; color:var(--ink-soft); margin-top:6px; }
+
+  /* Sell: table */
+  table.mandi{ width:100%; border-collapse:collapse; font-size:14px; }
+  table.mandi th{
+    text-align:left; font-size:11.5px; text-transform:uppercase; letter-spacing:.04em;
+    color:var(--ink-soft); border-bottom:1.5px solid var(--line-strong); padding:8px 10px;
+  }
+  table.mandi td{ padding:11px 10px; border-bottom:1px solid var(--line); }
+  table.mandi tr:last-child td{ border-bottom:none; }
+  .trend-up{ color:var(--green-deep); font-weight:700; }
+  .trend-down{ color:var(--brick); font-weight:700; }
+  .price{ font-family:'IBM Plex Mono',monospace; font-weight:600; }
+
+  /* Ask: chat */
+  .chat-shell{ display:flex; flex-direction:column; height:420px; }
+  .chat-log{ flex:1; overflow-y:auto; padding:6px 4px; display:flex; flex-direction:column; gap:12px; }
+  .msg{ max-width:80%; padding:11px 14px; border-radius:12px; font-size:14.5px; line-height:1.45; }
+  .msg.user{ align-self:flex-end; background:var(--green-deep); color:var(--paper); border-bottom-right-radius:3px; }
+  .msg.bot{ align-self:flex-start; background:var(--paper); border:1px solid var(--line-strong); border-bottom-left-radius:3px; }
+  .chat-input-row{ display:flex; gap:10px; margin-top:14px; }
+  .chat-input-row input{ flex:1; padding:12px 14px; border:1.5px solid var(--line-strong); border-radius:999px; font-size:14.5px; background:var(--paper); }
+  .chat-input-row input:focus{ border-color:var(--green-deep); }
+  .send-btn{
+    width:44px; height:44px; border-radius:50%; background:var(--green-deep); color:var(--paper);
+    border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .send-btn:hover{ background:var(--gold); }
+  .lang-toggle{ display:flex; gap:6px; margin-bottom:14px; }
+  .lang-toggle button{
+    border:1.5px solid var(--line-strong); background:transparent; padding:6px 14px; border-radius:999px;
+    font-size:12.5px; font-weight:600; cursor:pointer; color:var(--ink-soft);
+  }
+  .lang-toggle button.active{ background:var(--sky); border-color:var(--sky); color:#fff; }
+
+  /* furrow divider */
+  .furrow{ height:26px; margin:0; }
+  .furrow svg{ width:100%; height:100%; display:block; }
+
+  footer{ border-top:1px solid var(--line); padding:44px 0; margin-top:20px; }
+  footer .wrap{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; }
+  footer p{ color:var(--ink-soft); font-size:13.5px; margin:0; }
+  footer .foot-mark{ font-family:'Fraunces',serif; font-weight:700; }
+  .integration-note{
+    background:rgba(217,140,21,0.12); border:1px solid rgba(217,140,21,0.4); border-radius:var(--radius);
+    padding:10px 14px; font-size:12.5px; color:var(--ink-soft); margin-top:16px; font-family:'IBM Plex Mono',monospace;
+  }
+</style>
+</head>
+<body>
+
+<nav class="rail">
+  <div class="rail-inner">
+    <div class="rail-mark">Krishi<span class="dot">•</span>Mitra</div>
+    <ul class="rail-stages">
+      <li><a href="#sow" class="stage-link"><span class="num">01</span>Sow</a></li>
+      <li><a href="#grow" class="stage-link"><span class="num">02</span>Grow</a></li>
+      <li><a href="#protect" class="stage-link"><span class="num">03</span>Protect</a></li>
+      <li><a href="#sell" class="stage-link"><span class="num">04</span>Sell</a></li>
+      <li><a href="#ask" class="stage-link"><span class="num">05</span>Ask</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="hero-eyebrow">Built for the field, not the office</span>
+    <h1><span class="hi">कृषिमित्र</span>Your farm's five seasons, in one place.</h1>
+    <p>KrishiMitra follows the real life of a crop &mdash; sow, grow, protect, sell &mdash; and adds a fifth: a companion you can just ask. Instant disease diagnosis, live mandi prices, weather-led advice, all in your language.</p>
+    <div class="hero-cta">
+      <a href="/register" class="btn btn-solid">Get started free →</a>
+      <a href="#ask" class="btn btn-ghost">Ask KrishiMitra something</a>
+    </div>
+
+    <div class="timeline" aria-hidden="true">
+      <svg viewBox="0 0 1000 60" preserveAspectRatio="none">
+        <line x1="0" y1="30" x2="1000" y2="30" stroke="rgba(32,38,27,0.25)" stroke-width="1.5" stroke-dasharray="2 8"/>
+        <g id="timeline-dots"></g>
+      </svg>
+    </div>
+  </div>
+</header>
+
+<div class="furrow" aria-hidden="true"><svg viewBox="0 0 1000 26" preserveAspectRatio="none"><path d="M0,13 Q25,2 50,13 T100,13 T150,13 T200,13 T250,13 T300,13 T350,13 T400,13 T450,13 T500,13 T550,13 T600,13 T650,13 T700,13 T750,13 T800,13 T850,13 T900,13 T950,13 T1000,13" fill="none" stroke="rgba(47,74,46,0.35)" stroke-width="1.5"/></svg></div>
+
+<!-- ===================== 01 SOW ===================== -->
+<section class="stage" id="sow">
+  <div class="wrap">
+    <div class="stage-head"><span class="stage-num">01 / SOW</span><h2>What should go in the ground?</h2></div>
+    <p class="stage-sub">Tell us your soil, the season, and where you farm. <span class="hi">मिट्टी और मौसम के आधार पर फसल का सुझाव पाएं।</span></p>
+
+    <div class="panel grid2">
+      <div>
+        <div class="field">
+          <label for="soil">Soil type · मिट्टी</label>
+          <select id="soil">
+            <option>Alluvial · जलोढ़</option>
+            <option>Black (Regur) · काली मिट्टी</option>
+            <option>Red & Laterite · लाल मिट्टी</option>
+            <option>Sandy · बलुई</option>
+            <option>Loamy · दोमट</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="season">Season · मौसम</label>
+          <select id="season">
+            <option>Kharif (Jun–Oct)</option>
+            <option>Rabi (Oct–Mar)</option>
+            <option>Zaid (Mar–Jun)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="location-sow">Village / district · गाँव या ज़िला</label>
+          <input type="text" id="location-sow" placeholder="e.g. Meerut, Uttar Pradesh">
+        </div>
+        <button class="btn btn-solid" onclick="recommendCrop()">Get recommendation</button>
+      </div>
+      <div class="result-box" id="sow-result">
+        Your recommended crops and why they fit will appear here.
+      </div>
+    </div>
+    <div class="integration-note">→ POST /api/public/recommend-crop { soil, season, location } — connected to the KrishiMitra agronomy engine</div>
+  </div>
+</section>
+
+<div class="furrow" aria-hidden="true"><svg viewBox="0 0 1000 26" preserveAspectRatio="none"><path d="M0,13 Q25,24 50,13 T100,13 T150,13 T200,13 T250,13 T300,13 T350,13 T400,13 T450,13 T500,13 T550,13 T600,13 T650,13 T700,13 T750,13 T800,13 T850,13 T900,13 T950,13 T1000,13" fill="none" stroke="rgba(62,107,125,0.35)" stroke-width="1.5"/></svg></div>
+
+<!-- ===================== 02 GROW ===================== -->
+<section class="stage" id="grow">
+  <div class="wrap">
+    <div class="stage-head"><span class="stage-num">02 / GROW</span><h2>Watch the sky before the field.</h2></div>
+    <p class="stage-sub">Live conditions and an irrigation note for your exact location. <span class="hi">मौसम देखें, सिंचाई की सलाह पाएं।</span></p>
+
+    <div class="panel grid2">
+      <div>
+        <div class="field">
+          <label for="location-grow">City or village · शहर या गाँव</label>
+          <input type="text" id="location-grow" placeholder="e.g. Nashik, Maharashtra">
+        </div>
+        <button class="btn btn-solid" onclick="checkWeather()">Check weather</button>
+      </div>
+      <div class="result-box" id="grow-result">
+        Temperature, humidity, rain chance and an irrigation tip will appear here.
+      </div>
+    </div>
+    <div class="integration-note">→ GET /api/public/weather?location=… — connected to weather service (simulated when no API key is set)</div>
+  </div>
+</section>
+
+<div class="furrow" aria-hidden="true"><svg viewBox="0 0 1000 26" preserveAspectRatio="none"><path d="M0,13 Q25,2 50,13 T100,13 T150,13 T200,13 T250,13 T300,13 T350,13 T400,13 T450,13 T500,13 T550,13 T600,13 T650,13 T700,13 T750,13 T800,13 T850,13 T900,13 T950,13 T1000,13" fill="none" stroke="rgba(122,59,46,0.35)" stroke-width="1.5"/></svg></div>
+
+<!-- ===================== 03 PROTECT ===================== -->
+<section class="stage" id="protect">
+  <div class="wrap">
+    <div class="stage-head"><span class="stage-num">03 / PROTECT</span><h2>Something look wrong on the leaf?</h2></div>
+    <p class="stage-sub">Upload a photo. Fast local check first, deeper AI look if it's unsure. <span class="hi">पत्ते की फ़ोटो भेजें, तुरंत निदान पाएं।</span></p>
+
+    <div class="panel grid2">
+      <div>
+        <div class="upload-zone" id="drop-zone" onclick="document.getElementById('leaf-file').click()">
+          <input type="file" id="leaf-file" accept="image/*" onchange="handleLeafUpload(event)">
+          <div class="result-title">📷 Drop or tap to upload a crop photo</div>
+          <div class="upload-hint">JPG or PNG · clearest results with a single leaf in good light</div>
+          <img class="upload-preview" id="leaf-preview" alt="Uploaded crop leaf preview">
+        </div>
+        <button class="btn btn-solid" style="margin-top:16px;" onclick="diagnoseLeaf()">Diagnose</button>
+      </div>
+      <div class="result-box" id="protect-result">
+        Diagnosis, confidence score and a treatment note will appear here.
+      </div>
+    </div>
+    <div class="integration-note">→ POST /api/public/diagnose (multipart image) — connected to the KrishiMitra disease-detection engine</div>
+  </div>
+</section>
+
+<div class="furrow" aria-hidden="true"><svg viewBox="0 0 1000 26" preserveAspectRatio="none"><path d="M0,13 Q25,24 50,13 T100,13 T150,13 T200,13 T250,13 T300,13 T350,13 T400,13 T450,13 T500,13 T550,13 T600,13 T650,13 T700,13 T750,13 T800,13 T850,13 T900,13 T950,13 T1000,13" fill="none" stroke="rgba(217,140,21,0.4)" stroke-width="1.5"/></svg></div>
+
+<!-- ===================== 04 SELL ===================== -->
+<section class="stage" id="sell">
+  <div class="wrap">
+    <div class="stage-head"><span class="stage-num">04 / SELL</span><h2>Which mandi pays best today?</h2></div>
+    <p class="stage-sub">Compare live prices before you load the cart. <span class="hi">आज की मंडी भाव देखें।</span></p>
+
+    <div class="panel">
+      <div class="grid2" style="align-items:flex-end; margin-bottom:22px;">
+        <div class="field" style="margin-bottom:0;">
+          <label for="crop-select">Crop · फसल</label>
+          <select id="crop-select">
+            <option>Wheat · गेहूं</option>
+            <option>Rice (Paddy) · धान</option>
+            <option>Cotton · कपास</option>
+            <option>Soybean · सोयाबीन</option>
+            <option>Onion · प्याज</option>
+            <option>Tomato · टमाटर</option>
+          </select>
+        </div>
+        <button class="btn btn-solid" onclick="getMandiPrices()">Get mandi prices</button>
+      </div>
+      <table class="mandi" id="mandi-table">
+        <thead><tr><th>Mandi</th><th>Modal price (₹/quintal)</th><th>Trend</th></tr></thead>
+        <tbody><tr><td colspan="3" style="color:var(--ink-soft); text-align:center; padding:24px 0;">Select a crop and fetch today's prices.</td></tr></tbody>
+      </table>
+    </div>
+    <div class="integration-note">→ GET /api/public/mandi-prices?crop=… — connected to the KrishiMitra market price engine</div>
+  </div>
+</section>
+
+<div class="furrow" aria-hidden="true"><svg viewBox="0 0 1000 26" preserveAspectRatio="none"><path d="M0,13 Q25,2 50,13 T100,13 T150,13 T200,13 T250,13 T300,13 T350,13 T400,13 T450,13 T500,13 T550,13 T600,13 T650,13 T700,13 T750,13 T800,13 T850,13 T900,13 T950,13 T1000,13" fill="none" stroke="rgba(47,74,46,0.35)" stroke-width="1.5"/></svg></div>
+
+<!-- ===================== 05 ASK ===================== -->
+<section class="stage" id="ask">
+  <div class="wrap">
+    <div class="stage-head"><span class="stage-num">05 / ASK</span><h2>Just ask, like you'd ask a neighbour.</h2></div>
+    <p class="stage-sub">Government schemes, fertiliser doses, planting spacing &mdash; ask anything. <span class="hi">कुछ भी पूछें, हिंदी में भी।</span></p>
+
+    <div class="panel" style="max-width:640px;">
+      <div class="lang-toggle">
+        <button class="active" id="lang-en" onclick="setLang('en')">English</button>
+        <button id="lang-hi" onclick="setLang('hi')">हिंदी</button>
+      </div>
+      <div class="chat-shell">
+        <div class="chat-log" id="chat-log">
+          <div class="msg bot">Namaste 🙏 I'm KrishiMitra. Ask me about crops, pests, weather, or mandi prices.</div>
+        </div>
+        <div class="chat-input-row">
+          <input type="text" id="chat-input" placeholder="Type your question…" onkeydown="if(event.key==='Enter') sendChat()">
+          <button class="send-btn" onclick="sendChat()" aria-label="Send message">→</button>
+        </div>
+      </div>
+    </div>
+    <div class="integration-note">→ POST /api/public/chat { message, lang } — connected to the KrishiMitra AI chat engine (same endpoint reusable for WhatsApp)</div>
+    <div style="margin-top:10px;">
+      <a href="/login" class="btn btn-solid" style="font-size:13px; padding:10px 18px;">Open full app →</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <div class="foot-mark">Krishi<span style="color:var(--gold)">•</span>Mitra</div>
+      <p>A companion for every season of the crop.</p>
+    </div>
+    <p><a href="/login" class="btn btn-solid" style="font-size:13px; padding:10px 18px;">Open app →</a></p>
+  </div>
+</footer>
+
+<script>
+  // Single-port relative API base
+  const API_BASE = '/api/public';
+
+  // ---------- Growth-rail active state ----------
+  const stages = document.querySelectorAll('.stage');
+  const links = document.querySelectorAll('.stage-link');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        links.forEach(l=>l.classList.remove('active'));
+        const active = document.querySelector('.stage-link[href="#'+e.target.id+'"]');
+        if(active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-40% 0px -50% 0px' });
+  stages.forEach(s=>io.observe(s));
+
+  // ---------- Hero timeline dots (five stages of a crop) ----------
+  const tl = document.getElementById('timeline-dots');
+  const stageLabels = ['Sow','Grow','Protect','Sell','Ask'];
+  stageLabels.forEach((label,i)=>{
+    const x = 60 + i*(880/4);
+    const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+    g.innerHTML = `<circle cx="${x}" cy="30" r="6" fill="${i===2?'#D98C15':'#5C8A4A'}" />
+                   <text x="${x}" y="52" font-size="12" font-family="IBM Plex Mono, monospace" fill="#4B4E3F" text-anchor="middle">${label}</text>`;
+    tl.appendChild(g);
+  });
+
+  // ---------- Helper: show loading state ----------
+  function setLoading(boxId, message) {
+    const box = document.getElementById(boxId);
+    box.classList.remove('filled');
+    box.innerHTML = `<div style="color:var(--ink-soft); font-style:italic;">${message}</div>`;
+    return box;
+  }
+
+  function showError(boxId, message) {
+    const box = document.getElementById(boxId);
+    box.classList.remove('filled');
+    box.innerHTML = `<div style="color:var(--brick);">${message}</div>`;
+  }
+
+  // ---------- 01 Sow: real recommendation via /api/public/recommend-crop ----------
+  async function recommendCrop(){
+    const soil = document.getElementById('soil').value;
+    const season = document.getElementById('season').value;
+    const loc = document.getElementById('location-sow').value || 'India';
+    const box = setLoading('sow-result', 'Fetching recommendations…');
+    try {
+      const res = await fetch(`${API_BASE}/recommend-crop`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ soil, season, location: loc })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Request failed');
+      const crops = (data.data?.recommended_crops || []);
+      if (crops.length === 0) {
+        box.classList.add('filled');
+        box.innerHTML = `<div class="result-title">No strong matches</div><div>${data.data?.notes || ''}</div>`;
+        return;
+      }
+      box.classList.add('filled');
+      box.innerHTML = `<div class="result-title">Best fit for ${loc}</div>
+        <div>${crops.slice(0,3).map(c=>`<strong>${c.name}</strong> — ${c.matches?.join(', ') || ''}`).join('<br>')}</div>
+        <div style="margin-top:8px; font-size:13px; color:var(--ink-soft);">${data.data?.notes || ''}</div>`;
+    } catch(e) {
+      showError('sow-result', `Could not reach the recommendation engine. ${e.message}`);
+    }
+  }
+
+  // ---------- 02 Grow: real weather via /api/public/weather ----------
+  async function checkWeather(){
+    const loc = document.getElementById('location-grow').value;
+    if(!loc){ showError('grow-result', 'Enter a location first.'); return; }
+    const box = setLoading('grow-result', 'Fetching weather…');
+    try {
+      const res = await fetch(`${API_BASE}/weather?location=${encodeURIComponent(loc)}`);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Request failed');
+      const w = data.data;
+      const simTag = w.simulated ? '<span class="badge">Simulated — add WEATHER_API_KEY for live data</span>' : '';
+      const tips = (w.farmingTips || []).slice(0,2);
+      box.classList.add('filled');
+      box.innerHTML = `<div class="result-title">${w.city || loc}</div>
+        <div class="mono">${w.tempC}°C &nbsp;·&nbsp; ${w.humidity}% humidity &nbsp;·&nbsp; ${w.weather?.description || ''}</div>
+        <div>Wind: ${w.windSpeed} m/s</div>
+        ${tips.length ? '<div style="margin-top:8px;">'+tips.join('<br>')+'</div>' : ''}
+        ${simTag}`;
+    } catch(e) {
+      showError('grow-result', `Could not reach the weather service. ${e.message}`);
+    }
+  }
+
+  // ---------- 03 Protect: real disease diagnosis via /api/public/diagnose ----------
+  function handleLeafUpload(e){
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = ev=>{
+      const img = document.getElementById('leaf-preview');
+      img.src = ev.target.result;
+      img.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  }
+
+  async function diagnoseLeaf(){
+    const box = setLoading('protect-result', 'Analysing image…');
+    const file = document.getElementById('leaf-file').files[0];
+    if(!file){ showError('protect-result', 'Upload a photo first.'); return; }
+    const formData = new FormData();
+    formData.append('image', file);
+    try {
+      const res = await fetch(`${API_BASE}/diagnose`, { method: 'POST', body: formData });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Request failed');
+      const d = data.data;
+      const confPct = Math.round((d.confidence || 0) * 100);
+      box.classList.add('filled');
+      box.innerHTML = `<div class="result-title">${d.detected_disease}</div>
+        <div class="mono">Confidence: ${confPct}%</div>
+        <div><strong>Symptoms:</strong> ${d.symptoms}</div>
+        <div style="margin-top:6px;"><strong>Treatment:</strong> ${d.control_measures}</div>
+        <div style="margin-top:8px; font-size:12px; color:var(--ink-soft);">${d.disclaimer}</div>`;
+    } catch(e) {
+      showError('protect-result', `Could not reach the diagnosis engine. ${e.message}`);
+    }
+  }
+
+  // ---------- 04 Sell: real mandi prices via /api/public/mandi-prices ----------
+  async function getMandiPrices(){
+    const crop = document.getElementById('crop-select').value;
+    const tbody = document.querySelector('#mandi-table tbody');
+    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:16px; color:var(--ink-soft);">Loading…</td></tr>';
+    try {
+      const res = await fetch(`${API_BASE}/mandi-prices?crop=${encodeURIComponent(crop)}`);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Request failed');
+      const prices = data.data?.prices || [];
+      tbody.innerHTML = '';
+      prices.forEach(p=>{
+        const up = p.trend === 'up';
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${p.mandi}</td><td class="price">₹${p.modal_price.toLocaleString('en-IN')}</td>
+          <td class="${up?'trend-up':'trend-down'}">${up?'▲ rising':'▼ falling'}</td>`;
+        tbody.appendChild(tr);
+      });
+      const note = document.createElement('tr');
+      note.innerHTML = `<td colspan="3" style="text-align:center; padding-top:14px; border:none;"><span class="badge">Sample data for ${crop.split(' · ')[0]} — connect the mandi price API</span></td>`;
+      tbody.appendChild(note);
+    } catch(e) {
+      tbody.innerHTML = `<tr><td colspan="3" style="color:var(--brick); text-align:center; padding:16px;">Could not fetch prices. ${e.message}</td></tr>`;
+    }
+  }
+
+  // ---------- 05 Ask: real chat via /api/public/chat ----------
+  let lang = 'en';
+  function setLang(l){
+    lang = l;
+    document.getElementById('lang-en').classList.toggle('active', l==='en');
+    document.getElementById('lang-hi').classList.toggle('active', l==='hi');
+  }
+
+  async function sendChat(){
+    const input = document.getElementById('chat-input');
+    const text = input.value.trim();
+    if(!text) return;
+    const log = document.getElementById('chat-log');
+
+    const userMsg = document.createElement('div');
+    userMsg.className = 'msg user';
+    userMsg.textContent = text;
+    log.appendChild(userMsg);
+    input.value = '';
+    log.scrollTop = log.scrollHeight;
+
+    // Typing indicator
+    const typing = document.createElement('div');
+    typing.className = 'msg bot';
+    typing.textContent = '…';
+    typing.style.opacity = '0.5';
+    log.appendChild(typing);
+    log.scrollTop = log.scrollHeight;
+
+    try {
+      const res = await fetch(`${API_BASE}/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text, lang })
+      });
+      const data = await res.json();
+      typing.remove();
+      const botMsg = document.createElement('div');
+      botMsg.className = 'msg bot';
+      botMsg.textContent = data.data?.reply?.content
+        || data.data?.reply
+        || 'Sorry, I could not get a response right now.';
+      log.appendChild(botMsg);
+    } catch(e) {
+      typing.remove();
+      const errMsg = document.createElement('div');
+      errMsg.className = 'msg bot';
+      errMsg.textContent = 'Could not connect to KrishiMitra AI right now. Make sure the server is running.';
+      log.appendChild(errMsg);
+    }
+    log.scrollTop = log.scrollHeight;
+  }
+
+  // Allow Enter key in chat
+  document.getElementById('chat-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') sendChat();
+  });
+</script>
+</body>
+</html>
