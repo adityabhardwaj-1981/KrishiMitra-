@@ -16,13 +16,28 @@ const { notFound, errorHandler } = require('./middleware/errorHandler');
 
 const app = express();
 
-// Initialize DB schema and seed data on startup
-try {
-  initDb();
-  seedIfEmpty();
-} catch (err) {
-  console.warn('[DB] Init/seed warning:', err.message);
+// ---- Database Initialization with Async Safety ----
+let isDbReady = false;
+let dbInitPromise = null;
+
+async function ensureDb() {
+  if (isDbReady) return;
+  if (!dbInitPromise) {
+    dbInitPromise = (async () => {
+      try {
+        initDb();
+        await seedIfEmpty();
+        isDbReady = true;
+      } catch (err) {
+        console.error('[DB Setup Error]:', err);
+      }
+    })();
+  }
+  return dbInitPromise;
 }
+
+// Trigger initialization on startup
+ensureDb();
 
 // ---- Security & Middleware ----
 app.use(helmet({ contentSecurityPolicy: false }));
@@ -31,11 +46,20 @@ app.use(express.json({ limit: '5mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 
+// Ensure DB is seeded before processing incoming API requests
+app.use(async (req, res, next) => {
+  if (req.path.startsWith('/api') || req.path.startsWith('/auth') || req.path.startsWith('/chat')) {
+    await ensureDb();
+  }
+  next();
+});
+
 // Static uploads folder
 app.use('/uploads', express.static(path.resolve(__dirname, 'uploads')));
 
-// ---- API Routes ----
+// ---- API Routes (Mounted at both /api and / for serverless compatibility) ----
 app.use('/api', routes);
+app.use('/', routes);
 
 // ---- Static Assets & Frontend Routing ----
 const clientDistPath = path.resolve(__dirname, '../client/dist');

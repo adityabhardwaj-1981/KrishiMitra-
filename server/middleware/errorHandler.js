@@ -28,14 +28,16 @@ function errorHandler(err, req, res, next) {
       : 'Database error: ' + err.message;
   }
 
+  if (statusCode >= 500) {
+    console.error(`[Server Error 500] ${req.method} ${req.originalUrl}:`, err);
+  }
+
   const body = {
     success: false,
     message,
     ...(details ? { details } : {}),
   };
-  if (env.NODE_ENV === 'development' && statusCode >= 500) {
-    body.stack = err.stack;
-  }
+  body.stack = err.stack;
   return res.status(statusCode).json(body);
 }
 
