@@ -24,19 +24,19 @@
     },
     {
       "src": "/landing",
-      "dest": "/landing.html"
+      "dest": "/client/landing.html"
     },
     {
       "src": "/",
-      "dest": "/landing.html"
+      "dest": "/client/landing.html"
     },
     {
       "src": "/assets/(.*)",
-      "dest": "/assets/$1"
+      "dest": "/client/assets/$1"
     },
     {
       "src": "/(.*)",
-      "dest": "/index.html"
+      "dest": "/client/index.html"
     }
   ]
 }
