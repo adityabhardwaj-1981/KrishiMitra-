@@ -46,9 +46,10 @@ export default function Dashboard() {
 
   return (
     <div>
-      <Card className="mb-3" style={{ background: 'linear-gradient(135deg, #14532d, #166534)', color: '#fff', border: 'none' }}>
-        <h2 style={{ fontSize: 26 }}>{greet}, {user?.name || 'Farmer'}! 👋</h2>
-        <p style={{ opacity: 0.9, marginTop: 6 }}>Here's your farm at a glance. KrishiMitra AI is here to help with every decision.</p>
+      <Card className="mb-3" style={{ background: 'var(--green-deep)', color: 'var(--paper)', border: '1px solid var(--line-strong)', boxShadow: 'var(--shadow-hover)' }}>
+        <span className="hi" style={{ fontSize: '1.1rem', color: 'var(--gold)', fontWeight: 600 }}>कृषिमित्र · डैशबोर्ड</span>
+        <h2 style={{ fontSize: 28, color: 'var(--paper)', marginTop: 4 }}>{greet}, {user?.name || 'Farmer'}! 👋</h2>
+        <p style={{ opacity: 0.9, marginTop: 6, fontSize: 15 }}>Here's your farm at a glance. KrishiMitra AI is ready to assist across all five stages of your crop.</p>
       </Card>
 
       {loading ? <Loading /> : (

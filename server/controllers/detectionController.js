@@ -24,16 +24,20 @@ const saveDetection = (userId, type, result, imagePath) => {
   );
 };
 
+const fs = require('fs');
+
 const detectDisease = asyncHandler(async (req, res, next) => {
   const cropHint = (req.body.crop || '');
   const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
-
-  if (!req.file) {
-    // Allow analysis without an image using crop hint (for demo/safety fallback)
-    // But we still require confidence caveat.
+  const filePath = req.file ? req.file.path : null;
+  const mimetype = req.file ? req.file.mimetype : 'image/jpeg';
+  
+  let buffer = req.file?.buffer;
+  if (!buffer && filePath && fs.existsSync(filePath)) {
+    buffer = fs.readFileSync(filePath);
   }
 
-  const result = aiService.detectDisease({ hint: cropHint });
+  const result = await aiService.detectDisease({ hint: cropHint, buffer, mimetype, imagePath });
   saveDetection(req.user.id, 'disease', result, imagePath);
 
   return success(res, { ...result, image: imagePath }, 'Disease analysis complete.');
@@ -42,7 +46,15 @@ const detectDisease = asyncHandler(async (req, res, next) => {
 const detectPest = asyncHandler(async (req, res, next) => {
   const cropHint = (req.body.crop || '');
   const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
-  const result = aiService.detectPest({ hint: cropHint });
+  const filePath = req.file ? req.file.path : null;
+  const mimetype = req.file ? req.file.mimetype : 'image/jpeg';
+
+  let buffer = req.file?.buffer;
+  if (!buffer && filePath && fs.existsSync(filePath)) {
+    buffer = fs.readFileSync(filePath);
+  }
+
+  const result = await aiService.detectPest({ hint: cropHint, buffer, mimetype, imagePath });
   saveDetection(req.user.id, 'pest', result, imagePath);
   return success(res, { ...result, image: imagePath }, 'Pest analysis complete.');
 });

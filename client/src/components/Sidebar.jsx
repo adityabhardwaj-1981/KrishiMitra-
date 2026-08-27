@@ -57,7 +57,8 @@ export default function Sidebar({ open, onClose }) {
   return (
     <aside className={`sidebar ${open ? 'open' : ''}`}>
       <div className="brand">
-        <span className="logo">🌾</span> KrishiMitra AI
+        <span className="logo">🌾</span>
+        <span>Krishi<span className="dot">•</span>Mitra</span>
       </div>
 
       <Group label="Farming Tools" items={FARMER_NAV} onClose={onClose} />

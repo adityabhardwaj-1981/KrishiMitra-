@@ -17,6 +17,7 @@ const farmRoutes = require('./farm');
 const analyticsRoutes = require('./analytics');
 const profileRoutes = require('./profile');
 const adminRoutes = require('./admin');
+const publicLandingRoutes = require('./publicLanding');
 
 const router = express.Router();
 
@@ -37,6 +38,7 @@ const routesV1 = [
   { path: '/profile', route: profileRoutes },
   { path: '/admin', route: adminRoutes },
   { path: '/health', route: require('./health') },
+  { path: '/public', route: publicLandingRoutes },
 ];
 
 routesV1.forEach((r) => router.use(r.path, r.route));

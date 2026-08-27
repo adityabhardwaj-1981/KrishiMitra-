@@ -9,7 +9,7 @@ const asyncHandler = require('../utils/asyncHandler');
 
 const recommend = asyncHandler(async (req, res, next) => {
   const { soil_type, season, water_availability, location, previous_crop } = req.body || {};
-  const result = aiService.recommendCrops({
+  const result = await aiService.recommendCrops({
     soil_type,
     season,
     water_availability,

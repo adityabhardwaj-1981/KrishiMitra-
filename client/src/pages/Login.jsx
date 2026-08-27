@@ -26,13 +26,19 @@ export default function Login() {
   return (
     <div className="auth-wrap">
       <div className="auth-side">
-        <h1>🌾 KrishiMitra AI</h1>
-        <p>Your AI-powered digital agriculture assistant for smarter farming decisions.</p>
+        <span className="hi" style={{ fontSize: '1.2rem', color: 'var(--gold)', fontWeight: 600 }}>कृषिमित्र</span>
+        <h1>Your farm's digital companion.</h1>
+        <p>Follow every stage of the crop — sow, grow, protect, sell — backed by AI-driven precision and live data.</p>
+        <div style={{ marginTop: 24 }}>
+          <a href="/" style={{ fontSize: 13, color: 'var(--paper)', textDecoration: 'underline', opacity: 0.85 }}>
+            ← Back to landing page
+          </a>
+        </div>
       </div>
       <div className="auth-form">
         <div className="inner">
-          <h2 style={{ marginBottom: 8 }}>Login</h2>
-          <p className="muted mb-2">Access your farming dashboard</p>
+          <h2 style={{ marginBottom: 6 }}>Login</h2>
+          <p className="muted mb-2" style={{ fontSize: 14 }}>Access your farming dashboard</p>
           <ErrorBanner message={error} />
           <form onSubmit={submit}>
             <Field label="Email">

@@ -31,13 +31,19 @@ export default function Register() {
   return (
     <div className="auth-wrap">
       <div className="auth-side">
-        <h1>🌾 Join KrishiMitra</h1>
-        <p>Manage your farm, get AI insights, and connect with a community of farmers.</p>
+        <span className="hi" style={{ fontSize: '1.2rem', color: 'var(--gold)', fontWeight: 600 }}>कृषिमित्र</span>
+        <h1>Join KrishiMitra</h1>
+        <p>Manage your farm, get AI disease diagnosis, live mandi prices, and connect with a community of farmers.</p>
+        <div style={{ marginTop: 24 }}>
+          <a href="/" style={{ fontSize: 13, color: 'var(--paper)', textDecoration: 'underline', opacity: 0.85 }}>
+            ← Back to landing page
+          </a>
+        </div>
       </div>
       <div className="auth-form">
         <div className="inner">
-          <h2 style={{ marginBottom: 8 }}>Create Account</h2>
-          <p className="muted mb-2">Start your digital farming journey</p>
+          <h2 style={{ marginBottom: 6 }}>Create Account</h2>
+          <p className="muted mb-2" style={{ fontSize: 14 }}>Start your digital farming journey</p>
           <ErrorBanner message={error} />
           <form onSubmit={submit}>
             <div className="grid" style={{ gridTemplateColumns: '1fr 1fr', gap: 12 }}>
