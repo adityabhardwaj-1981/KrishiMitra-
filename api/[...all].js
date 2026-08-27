@@ -1,5 +1,5 @@
 /**
- * Vercel Serverless Function Root Handler
+ * Vercel Serverless Function Catch-All Handler for /api/*
  */
 const app = require('../server/app');
 
